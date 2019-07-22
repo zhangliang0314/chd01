@@ -2,4 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chd.mapper.DeliveryaddressMapper">
 
+    <select id="showaddressByUid" parameterType="int" resultType="Deliveryaddress">
+        select * from deliveryaddress where uid = #{uid};
+    </select>
+    <select id="selDeliveryaddressById" parameterType="int" resultType="Deliveryaddress">
+        select * from deliveryaddress where id = #{id};
+    </select>
+
+    <update id="updAddress" parameterType="Deliveryaddress">
+        UPDATE deliveryaddress set receiver=#{receiver},receiverphone=#{receiverphone},address=#{address} WHERE id=#{id}
+    </update>
+    <insert id="insAddress" parameterType="Deliveryaddress">
+        INSERT INTO deliveryaddress(uid,receiver,receiverphone,address) VALUES (#{uid},#{receiver},#{receiverphone},#{address}) where uid = #{uid}
+    </insert>
 </mapper>

@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean checkUser(String username, String password) {
-        int count = userMapper.checkPassword(username, password);
+            int count = userMapper.checkPassword(username, password);
         return count>=1?true:false;
     }
 

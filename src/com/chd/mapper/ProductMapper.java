@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ProductMapper {
     List<Product> selProductsByCid(int cid);
+    List<Product> selProductsByKey(String productname);
 }

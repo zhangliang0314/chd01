@@ -12,5 +12,6 @@ import java.util.List;
  */
 public interface ProductService {
 
-    List<Product> selProducts(int cid);
+    List<Product> selProductsByCid(int cid);
+    List<Product> selProductsByKey(String key);
 }

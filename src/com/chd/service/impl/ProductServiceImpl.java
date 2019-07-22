@@ -21,7 +21,13 @@ public class ProductServiceImpl implements ProductService {
     private ProductMapper productMapper;
 
     @Override
-    public List<Product> selProducts(int cid) {
+    public List<Product> selProductsByCid(int cid) {
         return productMapper.selProductsByCid(cid);
+    }
+
+    @Override
+    public List<Product> selProductsByKey(String productname) {
+        productname = "%"+productname+"%";
+        return productMapper.selProductsByKey(productname);
     }
 }

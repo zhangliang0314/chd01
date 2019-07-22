@@ -23,23 +23,23 @@
             <ul>
                 <li><a href="http://www.mi.com/" target="_blank">小米商城</a></li>
                 <li>|</li>
-                <li><a href="">MIUI</a></li>
+                <li><a href="https://www.miui.com">MIUI</a></li>
                 <li>|</li>
-                <li><a href="">米聊</a></li>
+                <li><a href="https://qiye.mi.com">企业团购</a></li>
                 <li>|</li>
-                <li><a href="">游戏</a></li>
+                <li><a href="https://www.mi.com/aptitude/list">协议规则</a></li>
                 <li>|</li>
-                <li><a href="">多看阅读</a></li>
+                <li><a href="https://iot.mi.com/index.html">IoT</a></li>
                 <li>|</li>
-                <li><a href="">云服务</a></li>
+                <li><a href="https://i.mi.com/">云服务</a></li>
                 <li>|</li>
-                <li><a href="">金融</a></li>
+                <li><a href="https://jr.mi.com?from=micom">金融</a></li>
                 <li>|</li>
-                <li><a href="">小米商城移动版</a></li>
+                <li><a href="https://www.mi.com/aptitude/list/?id=41">资质证照</a></li>
                 <li>|</li>
-                <li><a href="">问题反馈</a></li>
+                <li><a href="https://xiaoai.mi.com/">小爱开放平台</a></li>
                 <li>|</li>
-                <li><a href="">Select Region</a></li>
+                <li><a href="https://youpin.mi.com">有品</a></li>
                 <div class="clear"></div>
             </ul>
         </div>
@@ -98,7 +98,7 @@
             <div class="ddzx">订单中心</div>
             <div class="subddzx">
                 <ul>
-                    <li><a href="./dingdanzhongxin.html" >我的订单</a></li>
+                    <li><a href="dingdanzhongxin" >我的订单</a></li>
                     <li><a href="">意外保</a></li>
                     <li><a href="">团购订单</a></li>
                     <li><a href="">评价晒单</a></li>
@@ -107,36 +107,53 @@
             <div class="ddzx">个人中心</div>
             <div class="subddzx">
                 <ul>
-                    <li><a href="selInfo.do" style="color:#ff6700;font-weight:bold;">我的个人中心</a></li>
+                    <li><a href="selInfo.do?id=${user.id}" style="color:#ff6700;font-weight:bold;">我的个人中心</a></li>
                     <li><a href="">消息通知</a></li>
                     <li><a href="">优惠券</a></li>
-                    <li><a href="">收货地址</a></li>
+                    <li><a href="showaddress.do?id=${user.id}">收货地址</a></li>
                 </ul>
             </div>
         </div>
         <div class="rtcont fr">
-            <div class="grzlbt ml40">我的资料</div>
-            <span style="text-align: center;display:block;color: red;">${msg}</span>
-            <form action="updInfo.do"method="post">
-                <input type="hidden" name="id" value="${user.id}">
-                <div class="subgrzl ml40"><span>昵称</span><span><input type="text" name="username"value="${user.username}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <div class="subgrzl ml40"><span>手机号</span><span><input type="text" name="tel"value="${user.tel}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <div class="subgrzl ml40"><span>密码</span><span><input type="text" name="password"value="${user.password}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <div class="subgrzl ml40"><span>个性签名</span><span><input type="text" name="sign"value="${user.sign}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <div class="subgrzl ml40"><span>我的爱好</span><span><input type="text" name="hobby"value="${user.hobby}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <div class="subgrzl ml40"><span>收货地址</span><span><input type="text" name="address"value="${user.address}" style="border-style:none"></span><span><a href="">修改</a></span></div>
-                <span style="text-align: center;display:block;" ><input class="sub" name="sub" type="submit"  value="确认修改"></span>
-            </form>
-        </div>
+            <c:choose>
+                <c:when test="${flag eq 'showaddress'}">
+                    <div  style="overflow-y: auto;overflow-x:hidden;height: 500px ">
+                        <div  class="grzlbt ml40">我的收货地址&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span ><button class="sub"><a href="insaddress.do?id=${user.id}">新增地址</a></button></span></div>
+                    <span style="text-align: center;display:block;color: red;">${msg}</span>
+                    <c:forEach items="${deliveryaddresses}" var="deliveryaddress">
+                        <form action="updadderss.do"method="post">
+                            <input type="hidden" name="uid" value="${deliveryaddress.uid}">
+                            <input type="hidden" name="id" value="${deliveryaddress.id}">
+                            <div class="subgrzl ml40"><span>姓名</span><span><input type="text" name="receiver"value="${deliveryaddress.receiver}" style="border-style:none"></span><span></span></div>
+                            <div class="subgrzl ml40"><span>电话</span><span><input type="text" name="receiverphone"value="${deliveryaddress.receiverphone}" style="border-style:none"></span><span></span></div>
+                            <div class="subgrzl ml40"><span>地址</span><span><input type="text" name="address"value="${deliveryaddress.address}" style="border-style:none"></span><span></span></div>
+                            <span style="text-align: center;display:block;" ><input class="sub" name="sub" type="submit"  value="确认修改"></span>
+                        </form>
+                    </c:forEach>
+                    </div>
+                </c:when>
+                <c:when test="${flag eq 'showinfo'}">
+                    <div class="grzlbt ml40">我的资料</div>
+                    <span style="text-align: center;display:block;color: red;">${msg}</span>
+                    <form action="updInfo.do"method="post">
+                        <input type="hidden" name="id" value="${user.id}">
+                        <div class="subgrzl ml40"><span>昵称</span><span><input type="text" name="username"value="${user.username}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <div class="subgrzl ml40"><span>手机号</span><span><input type="text" name="tel"value="${user.tel}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <div class="subgrzl ml40"><span>密码</span><span><input type="text" name="password"value="${user.password}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <div class="subgrzl ml40"><span>个性签名</span><span><input type="text" name="sign"value="${user.sign}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <div class="subgrzl ml40"><span>我的爱好</span><span><input type="text" name="hobby"value="${user.hobby}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <div class="subgrzl ml40"><span>收货地址</span><span><input type="text" name="address"value="${user.address}" style="border-style:none"></span><span><a href="">修改</a></span></div>
+                        <span style="text-align: center;display:block;" ><input class="sub" name="sub" type="submit"  value="确认修改"></span>
+                    </form>
+                    </div>
+                 </c:when>
+            </c:choose>
+
         <div class="clear"></div>
     </div>
 </div>
 <!-- self_info -->
 
-<footer class="mt20 center">
-    <div class="mt20">小米商城|MIUI|米聊|多看书城|小米路由器|视频电话|小米天猫店|小米淘宝直营店|小米网盟|小米移动|隐私政策|Select Region</div>
-    <div>©mi.com 京ICP证110507号 京ICP备10046444号 京公网安备11010802020134号 京网文[2014]0059-0009号</div>
-    <div>违法和不良信息举报电话：185-0130-1238，本网站所列数据，除特殊说明，所有数据均出自我司实验室测试</div>
-</footer>
 </body>
 </html>

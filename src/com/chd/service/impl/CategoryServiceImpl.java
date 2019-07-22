@@ -20,7 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryMapper categoryMapper;
-
+    
     @Override
     public List<Category> selCategories() {
         return categoryMapper.selCategories();

@@ -1,11 +1,7 @@
 package com.chd.controller;
 
-import com.chd.model.Category;
-import com.chd.model.Product;
-import com.chd.model.User;
-import com.chd.service.CategoryService;
-import com.chd.service.ProductService;
-import com.chd.service.UserService;
+import com.chd.model.*;
+import com.chd.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,16 +34,51 @@ public class FrontController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShoppingcartService shoppingcartService;
+
+    @Autowired
+    private ProductimageService productimageService;
+    @Autowired
+    private ProductdetailService productdetailService;
+
+    @Autowired
+    private DeliveryaddressService deliveryaddressService;
+
+    @RequestMapping("shoppingcar.do")
+    public String shoppingcart(int id) {
+        int uid = id;
+        logger.info("uid = ="+ uid);
+        List<Shoppingcart> shoppingcarts = shoppingcartService.selShoppingcartByUid(uid);
+        logger.info(shoppingcarts.size());
+
+        return "frontpage/shopcar";
+    }
     @RequestMapping("index.do")
     public String index(Model model) {
         List<Category> categories = categoryService.selCategories();
         for (Category category : categories) {
-            List<Product> products =  productService.selProducts(category.getId());
+            List<Product> products =  productService.selProductsByCid(category.getId());
+            for (Product product : products) {
+                logger.info("product:" + product.getProductname());
+                List<Productimage> productimages=productimageService.selectProductimageByPid(product.getId());
+                for (Productimage productimage : productimages) {
+                    logger.info("productimage:" + productimage.getPath());
+                }
+                product.setProductimage(productimages);
+                //model.addAttribute("productimages",productimages);
+            }
             category.setProducts(products);
         }
         model.addAttribute("categories",categories);
+
         return "frontpage/index";
     }
+
+
+
+
     @RequestMapping("register.do")
     public String register() {
 
@@ -102,11 +133,7 @@ public class FrontController {
         logger.info("password:" + password);
         logger.info("code:" + code);
 
-        if (!code.equals("rmcc")){
-            //验证码是固定的，之后可以动态生成
-            request.setAttribute("msg","验证码错误");
-            return "frontpage/login";
-        }else if (userService.isExist(username)) {
+        if (userService.isExist(username)) {
 
             //存在该用户名，进行下一步判断
             logger.info("存在该用户");
@@ -114,7 +141,7 @@ public class FrontController {
                 //用户名和密码都正确，登录成功
                 User user = userService.selUserByUsername(username);
                 request.getSession().setAttribute("user", user);
-                return "frontpage/index";
+                return "forward:index.do";
             } else {
                 request.setAttribute("msg","用户名或密码不正确");
             }
@@ -139,6 +166,7 @@ public class FrontController {
         logger.info(id);
         User u = userService.selUserById(id);
         model.addAttribute("user",u);
+        model.addAttribute("flag","showinfo");
         return "frontpage/self_info";
     }
 
@@ -153,7 +181,67 @@ public class FrontController {
         User u = userService.selUserById(user.getId());
         model.addAttribute("user",u);
         model.addAttribute("msg","您的信息已经修改成功");
+        model.addAttribute("flag","showinfo");
         return "frontpage/self_info";
     }
+    //关键字查询
+    @RequestMapping("searchProduct.do")
+    public String search(String productname,
+                          Model model) {
+        logger.info(productname);
+        List<Product> products=productService.selProductsByKey(productname);
+        logger.info(products.size());
+        for (Product product : products) {
+            List<Productimage> productimages=productimageService.selectProductimageByPid(product.getId());
+            logger.info(productimages.size());
+            product.setProductimage(productimages);
+            List<Productdetail> productdetail=productdetailService.searchProductBypid(product.getId());
+            logger.info(productdetail.size());
+            product.setProductdetail(productdetail);
+        }
+       model.addAttribute("products",products);
+        return "frontpage/liebiao";
+    }
+
+
+    @RequestMapping("showaddress.do")
+    public String showaddress(int id,Model model) {
+        int uid = id;
+        List<Deliveryaddress> deliveryaddresses = deliveryaddressService.showaddressByUid(uid);
+        model.addAttribute("deliveryaddresses",deliveryaddresses);
+        logger.info(deliveryaddresses.size());
+        model.addAttribute("flag","showaddress");
+        return "frontpage/self_info";
+    }
+
+    @RequestMapping("updadderss.do")
+    public String updadderss(Deliveryaddress deliveryaddress,Model model) {
+        deliveryaddressService.updAdderss(deliveryaddress);
+        List<Deliveryaddress> deliveryaddresses = deliveryaddressService.showaddressByUid(deliveryaddress.getUid());
+        model.addAttribute("deliveryaddresses",deliveryaddresses);
+        model.addAttribute("msg","您的收货地址已经修改成功");
+        model.addAttribute("flag","showaddress");
+        return "frontpage/self_info";
+    }
+    @RequestMapping("insaddress.do")
+    public String insaddress(int id,Model model) {
+        model.addAttribute("uid",id);
+        return "frontpage/insaddress";
+    }
+
+    @RequestMapping("insadressSure.do")
+    public String insadressSure(Deliveryaddress deliveryaddress,Model model) {
+        deliveryaddressService.insAddress(deliveryaddress);
+        model.addAttribute("flag","showaddress");
+        return "redirect:index.do";
+    }
+
+    @RequestMapping("xiangqing.do")
+    public String xiangqing(int uid,int id,Model model) {
+        model.addAttribute("id",id);
+        model.addAttribute("uid",uid);
+        return "frontpage/xiangqing";
+    }
+
 
 }
